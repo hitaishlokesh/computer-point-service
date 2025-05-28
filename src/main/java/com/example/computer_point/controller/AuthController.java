@@ -17,10 +17,20 @@ public class AuthController {
 
     @PostMapping("/register")
     public String register(@RequestBody ComputerPointUser user) {
+        if (!user.getPassword().equals(user.getConfirmPassword())) {
+            return "❌ Password and Confirm Password do not match!";
+        }
+
+        // Optionally check if username or email already exists
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            return "❌ Username already exists!";
+        }
+
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
         return "✅ User registered!";
     }
+
 
     @PostMapping("/login")
     public String login(@RequestBody ComputerPointUser login) {

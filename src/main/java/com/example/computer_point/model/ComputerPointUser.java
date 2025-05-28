@@ -17,7 +17,10 @@ public class ComputerPointUser {
 
     private String email;
 
-    // 🔽 Getters & Setters
+    @Transient
+    private String confirmPassword;  // ⛔️ Will not be saved to the DB
+
+    // Getters & Setters
     public Long getId() {
         return id;
     }
@@ -35,7 +38,7 @@ public class ComputerPointUser {
     }
 
     public String getPassword() {
-        return password;  // 🟢 This method is required!
+        return password;
     }
 
     public void setPassword(String password) {
@@ -48,5 +51,13 @@ public class ComputerPointUser {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 }
