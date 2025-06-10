@@ -22,7 +22,7 @@ public class ComputerPointUser {
 
     // Getters & Setters
     public Long getId() {
-        return id;
+        return id; // ID declared
     }
 
     public void setId(Long id) {
