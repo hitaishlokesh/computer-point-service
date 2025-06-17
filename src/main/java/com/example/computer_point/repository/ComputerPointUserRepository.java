@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface ComputerPointUserRepository extends JpaRepository<ComputerPointUser, Long> {
     Optional<ComputerPointUser> findByUsername(String username);
+    Optional<ComputerPointUser> findByEmail(String email);
 }

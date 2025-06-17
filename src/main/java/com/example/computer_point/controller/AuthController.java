@@ -1,11 +1,18 @@
 package com.example.computer_point.controller;
 
 import com.example.computer_point.model.ComputerPointUser;
+import com.example.computer_point.model.LoginRequest;
 import com.example.computer_point.repository.ComputerPointUserRepository;
 import com.example.computer_point.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,14 +40,32 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public String login(@RequestBody ComputerPointUser login) {
-        var user = userRepository.findByUsername(login.getUsername());
+    public ResponseEntity<?> login(@RequestBody LoginRequest login) {
+        System.out.println("DEBUG username: " + login.getUsername());
+        String input = login.getUsername();
+        Optional<ComputerPointUser> user = userRepository.findByUsername(input);
+
+        if (user.isEmpty()) {
+            user = userRepository.findByEmail(input);
+        }
+
         if (user.isPresent() && encoder.matches(login.getPassword(), user.get().getPassword())) {
-            return jwtUtil.generateToken(login.getUsername());
+            String token = jwtUtil.generateToken(user.get().getUsername());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "✅ Login successful");
+            response.put("token", token);
+            response.put("username", user.get().getUsername());
+
+            return ResponseEntity.ok().body(response);
         } else {
-            return "❌ Invalid credentials";
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "❌ Invalid credentials");
+            return ResponseEntity.status(401).body(error);
         }
     }
+
+
 
     @GetMapping("/test")
     public String test() {
